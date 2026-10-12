@@ -2,25 +2,117 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #111111;
+  --ash: #f3f3f3;
+  --ash-mid: #8c8c8c;
+  --signal: #d2561f;
+  --color-signal: #d2561f;
+  --color-signal-dark: #b04514;
+  --color-ash: #f3f3f3;
+  --color-ash-mid: #8c8c8c;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: #ffffff;
+  color: #111111;
+  font-family: var(--font-poppins), sans-serif;
+}
+
+::selection {
+  background: #d2561f;
+  color: #ffffff;
+}
+
+:focus-visible {
+  outline: 2px solid #d2561f;
+  outline-offset: 2px;
+}
+
+/* Brand colors, written out in plain CSS so they always apply */
+.bg-signal { background-color: #d2561f; }
+.text-signal { color: #d2561f; }
+.border-signal { border-color: #d2561f; }
+.border-t-signal { border-top-color: #d2561f; }
+.bg-ash { background-color: #f3f3f3; }
+.hover\:bg-signal:hover { background-color: #d2561f; }
+.hover\:bg-signal-dark:hover { background-color: #b04514; }
+.hover\:text-signal:hover { color: #d2561f; }
+.hover\:border-signal:hover { border-color: #d2561f; }
+.focus\:border-signal:focus { border-color: #d2561f; }
+
+/* Moving image tracks for the hero.
+   Each track holds its content twice, so moving by 50% loops with no jump. */
+@keyframes drift-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes drift-right {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes drift-up {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+@keyframes drift-down {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
+}
+
+.drift-left {
+  animation: drift-left var(--drift-speed, 40s) linear infinite;
+}
+
+.drift-right {
+  animation: drift-right var(--drift-speed, 40s) linear infinite;
+}
+
+.drift-up {
+  animation: drift-up var(--drift-speed, 40s) linear infinite;
+}
+
+.drift-down {
+  animation: drift-down var(--drift-speed, 40s) linear infinite;
+}
+
+.drift-pause:hover .drift-left,
+.drift-pause:hover .drift-right,
+.drift-pause:hover .drift-up,
+.drift-pause:hover .drift-down {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drift-left,
+  .drift-right,
+  .drift-up,
+  .drift-down {
+    animation: none;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+@media print {
+  [role="dialog"] {
+    display: none !important;
+  }
 }
