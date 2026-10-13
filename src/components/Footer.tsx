@@ -51,9 +51,9 @@ const shopLinks = [
 const helpLinks = [
   { href: "/support", label: "Help & support" },
   { href: "/returns", label: "Shipping & returns" },
+  { href: "/track", label: "Track my order" },
   { href: "/account", label: "My account & orders" },
   { href: "/cart", label: "Cart" },
-  { href: "/track", label: "Track my order" },
 ];
 
 function externalProps(url: string) {
@@ -68,19 +68,19 @@ const headingClass =
 
 export default function Footer() {
   return (
-    <footer className="border-t-4 border-signal bg-black px-6 pb-8 pt-20 text-white">
+    <footer className="border-t-4 border-signal bg-black px-5 pb-8 pt-12 text-white sm:px-6 sm:pt-20">
       <div className="mx-auto max-w-7xl">
         {/* SECTIONS */}
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1.2fr]">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1.2fr] lg:gap-12">
           {/* BRAND */}
-          <div className="sm:col-span-2 lg:col-span-1">
+          <div className="col-span-2 lg:col-span-1">
             <Logo dark tagline />
 
-            <p className="mt-6 max-w-sm text-sm leading-7 text-gray-400">
+            <p className="mt-5 max-w-sm text-sm leading-7 text-gray-400 sm:mt-6">
               {ABOUT_LINE}
             </p>
 
-            <div className="mt-6">
+            <div className="mt-5 sm:mt-6">
               <SocialIcons socials={SOCIALS} />
             </div>
           </div>
@@ -89,7 +89,7 @@ export default function Footer() {
           <div>
             <p className={headingClass}>Shop</p>
 
-            <ul className="mt-5 space-y-3 text-sm">
+            <ul className="mt-4 space-y-2.5 text-sm sm:mt-5 sm:space-y-3">
               {shopLinks.map((link) => (
                 <li key={link.label}>
                   <Link href={link.href} className={linkClass}>
@@ -104,7 +104,7 @@ export default function Footer() {
           <div>
             <p className={headingClass}>Help &amp; Support</p>
 
-            <ul className="mt-5 space-y-3 text-sm">
+            <ul className="mt-4 space-y-2.5 text-sm sm:mt-5 sm:space-y-3">
               {helpLinks.map((link) => (
                 <li key={link.label}>
                   <Link href={link.href} className={linkClass}>
@@ -119,7 +119,7 @@ export default function Footer() {
           <div>
             <p className={headingClass}>Company</p>
 
-            <ul className="mt-5 space-y-3 text-sm">
+            <ul className="mt-4 space-y-2.5 text-sm sm:mt-5 sm:space-y-3">
               <li>
                 <Link href="/about" className={linkClass}>
                   About Imarax Drip
@@ -152,9 +152,12 @@ export default function Footer() {
           <div>
             <p className={headingClass}>Contact</p>
 
-            <ul className="mt-5 space-y-3 text-sm">
+            <ul className="mt-4 space-y-2.5 text-sm sm:mt-5 sm:space-y-3">
               <li>
-                <a href={`mailto:${EMAIL}`} className={linkClass}>
+                <a
+                  href={`mailto:${EMAIL}`}
+                  className={`${linkClass} break-all`}
+                >
                   {EMAIL}
                 </a>
               </li>
@@ -171,7 +174,7 @@ export default function Footer() {
         </div>
 
         {/* NEWSLETTER */}
-        <div className="mt-16 flex flex-col gap-6 border-t border-white/10 pt-10 md:flex-row md:items-center md:justify-between">
+        <div className="mt-12 flex flex-col gap-5 border-t border-white/10 pt-8 sm:mt-16 sm:pt-10 md:flex-row md:items-center md:justify-between">
           <div>
             <p className={headingClass}>{NEWSLETTER_TITLE}</p>
 
@@ -184,8 +187,8 @@ export default function Footer() {
         </div>
 
         {/* BOTTOM LINE */}
-        <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-white/10 pt-6 text-xs text-gray-500">
-          <span>© 2026 Imarax Drip. All rights reserved.</span>
+        <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-white/10 pt-6 text-xs text-gray-500 sm:mt-10 sm:gap-x-6">
+          <span>© 2026 Imarax Drip</span>
 
           <span>
             A brand of{" "}

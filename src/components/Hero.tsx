@@ -1,8 +1,10 @@
+import fs from "node:fs";
+import path from "node:path";
 import Link from "next/link";
 
 // =====================================================
-//  EDIT YOUR WORDS AND PICTURES HERE (change only the
-//  text between the quotes, keep the commas and quotes)
+//  EDIT YOUR WORDS HERE (change only the text between
+//  the quotes, keep the commas and quotes)
 // =====================================================
 
 const EYEBROW = "Imarax Drip / All-round wear";
@@ -26,30 +28,28 @@ const SCROLLING_WORDS = [
   "For everyone",
 ];
 
-// The moving pictures. They live in the folder public/hero.
-// Any number works (6 or more looks best). Leave the list empty
-// to show color blocks instead.
-const PICTURES: string[] = [
-  "/hero/look-1.jpg",
-  "/hero/look-2.jpg",
-  "/hero/look-3.jpg",
-  "/hero/look-4.jpg",
-  "/hero/look-5.jpg",
-  "/hero/look-6.jpg",
-  "/hero/look-7.jpg",
-  "/hero/look-8.jpg",
-  "/hero/look-9.jpg",
-  "/hero/look-10.jpg",
-  "/hero/look-11.jpg",
-  "/hero/look-12.jpg",
-  "/hero/look-13.jpg",
-  "/hero/look-14.jpg",
-  "/hero/look-15.jpg",
-];
+// PICTURES: nothing to edit. Every image file you put in the folder
+// public/hero (jpg, png, webp) is used automatically. Push to publish.
 
 // =====================================================
 //  YOU DO NOT NEED TO EDIT ANYTHING BELOW THIS LINE
 // =====================================================
+
+function loadPictures(): string[] {
+  try {
+    const folder = path.join(process.cwd(), "public", "hero");
+
+    return fs
+      .readdirSync(folder)
+      .filter((name) => /\.(jpe?g|png|webp|avif|gif)$/i.test(name))
+      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+      .map((name) => `/hero/${encodeURIComponent(name)}`);
+  } catch {
+    return [];
+  }
+}
+
+const PICTURES = loadPictures();
 
 type Tile = {
   src: string | null;
@@ -58,32 +58,25 @@ type Tile = {
   label: string;
 };
 
-type StripTile = {
-  src: string | null;
-  tone: string;
-};
-
 const ratios = ["3 / 4", "1 / 1", "4 / 5", "3 / 4", "1 / 1"];
 const tones = ["#d2561f", "#ececec", "#f3f3f3", "#e8b8a2", "#dcdcdc"];
 
-// Picks every "step"-th picture starting at "offset", so all pictures are
-// shared out evenly between the columns or strips.
-function pick(offset: number, step: number, minimum: number): (string | null)[] {
+// Shares the pictures out evenly: column 0 gets pictures 0, 3, 6...
+// column 1 gets 1, 4, 7... and column 2 gets 2, 5, 8...
+function buildColumn(offset: number): Tile[] {
+  let list: (string | null)[] = PICTURES.filter(
+    (_, index) => index % 3 === offset
+  );
+
   if (PICTURES.length === 0) {
-    return Array.from({ length: minimum }).map(() => null);
+    list = Array.from({ length: 5 }).map(() => null);
+  } else if (list.length === 0) {
+    list = [...PICTURES];
   }
 
-  let list: string[] = PICTURES.filter((_, index) => index % step === offset);
+  while (list.length < 5) list = [...list, ...list];
 
-  if (list.length === 0) list = [...PICTURES];
-
-  while (list.length < minimum) list = [...list, ...list];
-
-  return list;
-}
-
-function buildColumn(offset: number): Tile[] {
-  return pick(offset, 3, 5).map((src, i) => ({
+  return list.map((src, i) => ({
     src,
     ratio: ratios[(i + offset) % ratios.length],
     tone: tones[(i + offset) % tones.length],
@@ -91,19 +84,9 @@ function buildColumn(offset: number): Tile[] {
   }));
 }
 
-function buildStrip(offset: number): StripTile[] {
-  return pick(offset, 2, 6).map((src, i) => ({
-    src,
-    tone: tones[(i + offset) % tones.length],
-  }));
-}
-
 const columnA = buildColumn(0);
 const columnB = buildColumn(1);
 const columnC = buildColumn(2);
-
-const stripA = buildStrip(0);
-const stripB = buildStrip(1);
 
 const bandWords = Array.from({ length: 4 }).flatMap(() => SCROLLING_WORDS);
 
@@ -111,7 +94,7 @@ function TileView({ tile }: { tile: Tile }) {
   const onOrange = tile.tone === "#d2561f";
 
   return (
-    <div className="pb-4">
+    <div className="pb-3 lg:pb-4">
       <div
         className="relative w-full overflow-hidden rounded-sm"
         style={{ aspectRatio: tile.ratio, backgroundColor: tile.tone }}
@@ -120,7 +103,6 @@ function TileView({ tile }: { tile: Tile }) {
           <img
             src={tile.src}
             alt=""
-            loading="lazy"
             decoding="async"
             className="h-full w-full object-cover"
           />
@@ -162,43 +144,12 @@ function Column({
   );
 }
 
-function StripRow({
-  tiles,
-  direction,
-  speed,
-}: {
-  tiles: StripTile[];
-  direction: "left" | "right";
-  speed: number;
-}) {
-  const loop = [...tiles, ...tiles];
-
+function ImageWall() {
   return (
-    <div className="overflow-hidden">
-      <div
-        className={`flex w-max ${
-          direction === "left" ? "drift-left" : "drift-right"
-        }`}
-        style={{ "--drift-speed": `${speed}s` } as React.CSSProperties}
-      >
-        {loop.map((tile, index) => (
-          <div
-            key={index}
-            className="mr-3 h-44 w-36 shrink-0 overflow-hidden rounded-sm"
-            style={{ backgroundColor: tile.tone }}
-          >
-            {tile.src && (
-              <img
-                src={tile.src}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover"
-              />
-            )}
-          </div>
-        ))}
-      </div>
+    <div className="grid h-full grid-cols-3 gap-3 lg:gap-4">
+      <Column tiles={columnA} direction="up" speed={55} />
+      <Column tiles={columnB} direction="down" speed={70} />
+      <Column tiles={columnC} direction="up" speed={45} />
     </div>
   );
 }
@@ -211,11 +162,7 @@ export default function Hero() {
         aria-hidden="true"
         className="drift-pause absolute -bottom-[15%] -right-[8%] -top-[15%] hidden w-[58%] rotate-[8deg] lg:block"
       >
-        <div className="grid h-full grid-cols-3 gap-4">
-          <Column tiles={columnA} direction="up" speed={55} />
-          <Column tiles={columnB} direction="down" speed={70} />
-          <Column tiles={columnC} direction="up" speed={45} />
-        </div>
+        <ImageWall />
       </div>
 
       {/* TEXT, TOP LEFT */}
@@ -252,10 +199,14 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* MOVING STRIPS (phones and tablets) */}
-      <div className="relative z-10 space-y-3 pb-10 lg:hidden">
-        <StripRow tiles={stripA} direction="left" speed={50} />
-        <StripRow tiles={stripB} direction="right" speed={60} />
+      {/* MOVING IMAGE WALL (phones and tablets) */}
+      <div className="relative z-10 h-[440px] overflow-hidden lg:hidden">
+        <div
+          aria-hidden="true"
+          className="absolute -inset-x-10 -inset-y-12 rotate-[8deg]"
+        >
+          <ImageWall />
+        </div>
       </div>
 
       {/* MOVING BAND, BOTTOM */}
