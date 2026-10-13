@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdBanner from "@/components/AdBanner";
-import ProductCard from "@/components/Productcard";
+import ProductCard, { PRODUCT_GRID } from "@/components/Productcard";
 import { createClient } from "@/lib/supabase/client";
 import { PRODUCT_COLUMNS, Product, normalizeProduct } from "@/lib/products";
 
@@ -54,17 +54,19 @@ function ShopContent() {
   }, [products, activeCategory, search]);
 
   return (
-    <section className="px-6 pb-16 pt-6">
+    <section className="px-3 pb-14 pt-6 sm:px-6 sm:pb-16">
       <div className="mx-auto max-w-7xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-signal">
-          Shop
-        </p>
+        <div className="px-1 sm:px-0">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-signal">
+            Shop
+          </p>
 
-        <h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
-          Everything Imarax Drip
-        </h1>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight sm:mt-3 sm:text-4xl md:text-5xl">
+            Everything Imarax Drip
+          </h1>
+        </div>
 
-        <div className="mt-8 flex flex-wrap gap-3">
+        <div className="no-scrollbar mt-5 flex gap-2 overflow-x-auto px-1 pb-1 sm:mt-8 sm:flex-wrap sm:gap-3 sm:px-0">
           {categories.map((category) => {
             const active = category === activeCategory;
 
@@ -76,7 +78,7 @@ function ShopContent() {
                     ? "/shop"
                     : `/shop?category=${encodeURIComponent(category)}`
                 }
-                className={`rounded-full border px-5 py-2.5 text-sm font-semibold transition ${
+                className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition sm:px-5 sm:py-2.5 ${
                   active
                     ? "border-signal bg-signal text-white"
                     : "border-black/20 hover:border-signal"
@@ -89,13 +91,13 @@ function ShopContent() {
         </div>
 
         {loading ? (
-          <p className="mt-16 text-sm text-gray-500">Loading products...</p>
+          <p className="mt-10 px-1 text-sm text-gray-500">Loading products...</p>
         ) : visible.length === 0 ? (
-          <div className="mt-12 rounded-sm bg-ash px-6 py-20 text-center">
+          <div className="mt-10 rounded-sm bg-ash px-6 py-16 text-center">
             <p className="text-sm text-gray-500">No products found.</p>
           </div>
         ) : (
-          <div className="mt-12 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+          <div className={`mt-6 sm:mt-12 ${PRODUCT_GRID}`}>
             {visible.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import ProductCard from "./Productcard";
+import ProductCard, { PRODUCT_GRID } from "./Productcard";
 import AdBanner from "./AdBanner";
 import { createClient } from "@/lib/supabase/client";
 import { PRODUCT_COLUMNS, Product, normalizeProduct } from "@/lib/products";
@@ -36,37 +36,37 @@ export default function FeaturedProducts() {
   }, []);
 
   return (
-    <section id="products" className="bg-white px-6 py-24">
+    <section id="products" className="bg-white px-3 py-12 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-7xl">
-        <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+        <div className="flex items-end justify-between gap-4 px-1 sm:px-0">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-signal">
               Featured
             </p>
 
-            <h2 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
+            <h2 className="mt-2 text-3xl font-bold tracking-tight sm:mt-3 sm:text-4xl md:text-5xl">
               The latest drops
             </h2>
           </div>
 
           <Link
             href="/shop"
-            className="text-sm font-semibold underline underline-offset-4 transition hover:text-signal"
+            className="shrink-0 text-sm font-semibold underline underline-offset-4 transition hover:text-signal"
           >
-            View all products
+            View all
           </Link>
         </div>
 
         <AdBanner placement="home" compact />
 
         {loading ? (
-          <p className="mt-12 text-sm text-gray-500">Loading products...</p>
+          <p className="mt-10 px-1 text-sm text-gray-500">Loading products...</p>
         ) : products.length === 0 ? (
-          <div className="mt-12 rounded-sm bg-ash px-6 py-20 text-center">
+          <div className="mt-10 rounded-sm bg-ash px-6 py-16 text-center">
             <p className="text-sm text-gray-500">New products are coming soon.</p>
           </div>
         ) : (
-          <div className="mt-12 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+          <div className={`mt-6 sm:mt-12 ${PRODUCT_GRID}`}>
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
